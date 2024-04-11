@@ -1,0 +1,23 @@
+@import '@shared/styles/vars.scss';
+
+.textWeightBold {
+  font-weight: 700;
+}
+
+.textSM {
+  font-size: 14px;
+  line-height: 20px;
+}
+
+.textMD {
+  font-size: 18px;
+  line-height: 26px;
+}
+
+.general {
+  color: $light-summer;
+}
+
+.second {
+  color: $gray;
+}

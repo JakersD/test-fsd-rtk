@@ -1,0 +1,65 @@
+@import '@shared/styles/vars.scss';
+
+@mixin primary() {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: $active;
+  color: $white;
+  font-size: 18px;
+  line-height: 26px;
+  letter-spacing: 0px;
+  padding: 12px 32px;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+}
+
+@mixin secondary() {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: $white;
+  color: $active;
+  font-size: 18px;
+  line-height: 26px;
+  letter-spacing: 0px;
+  padding: 12px 32px;
+  border: 1px solid $active;
+  border-radius: 12px;
+  cursor: pointer;
+}
+
+.primary {
+  @include primary;
+
+  &Arrow {
+    @include primary;
+
+    &::after {
+      content: '';
+      display: inline-block;
+      margin-left: 8px;
+      width: 24px;
+      height: 24px;
+      background-image: url('public/icons/arrow-right-white.svg');
+    }
+  }
+}
+
+.secondary {
+  @include secondary;
+
+  &Arrow {
+    @include secondary;
+
+    &::after {
+      content: '';
+      display: inline-block;
+      margin-left: 8px;
+      width: 24px;
+      height: 24px;
+      background-image: url('public/icons/arrow-right-active.svg');
+    }
+  }
+}
