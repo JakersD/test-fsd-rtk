@@ -1,5 +1,6 @@
 import { IPost } from '@entities/post';
-import { ETitleSize, MainBlock, Text, Title } from '@shared/ui';
+import { Button, ETitleSize, MainBlock, Text, Title } from '@shared/ui';
+import { MAX_LENGTH } from '../config/post-config';
 import React from 'react';
 
 import styles from './post-item.module.scss';
@@ -15,9 +16,12 @@ export const PostItem: React.FC<IProps> = ({ post }) => {
         <Title className={styles.post_number} size={ETitleSize.H4}>
           {post.userId}
         </Title>
-        <Title size={ETitleSize.H4}>{post.title}</Title>
+        <Title size={ETitleSize.H3}>{post.title}</Title>
       </div>
       <Text className={styles.text}>{post.body}</Text>
+      {post.body.length >= MAX_LENGTH && (
+        <Button className={styles.button}>Подробнее</Button>
+      )}
     </MainBlock>
   );
 };
