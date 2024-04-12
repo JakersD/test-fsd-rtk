@@ -2,28 +2,41 @@ import { ETitleSize, Title } from '@shared/ui';
 import React, { useRef } from 'react';
 
 import styles from './post-list.module.scss';
-import { IPost, useGetPostsQuery } from '@entities/post';
+import { useGetPostsQuery } from '@entities/post';
 import { PostItem } from '@widgets/post-item/ui/post-item';
 
-import { AutoSizer, List, ListProps, ListRowProps, ListRowRenderer, WindowScroller } from 'react-virtualized';
-
-import 'react-virtualized/styles.css';
+import {
+  AutoSizer,
+  CellMeasurer,
+  CellMeasurerCache,
+  List,
+  ListRowProps,
+  WindowScroller,
+} from 'react-virtualized';
 
 export const PostListPage: React.FC = () => {
   const { data, isLoading } = useGetPostsQuery();
+  const cache = useRef(
+    new CellMeasurerCache({
+      fixedWidth: true,
+      defaultHeight: 260,
+    }),
+  );
 
   if (isLoading) {
     return <p>Loading</p>;
   }
 
-  const renderRow = ({ key, index, style }: ListRowProps): React.ReactNode => {
+  const renderRow = ({ key, index, style, parent }: ListRowProps): React.ReactNode => {
     if (data) {
       const post = data[index];
 
       return (
-        <div key={key} style={style}>
-          <PostItem key={post.id} post={post} />
-        </div>
+        <CellMeasurer key={key} cache={cache.current} parent={parent} columnIndex={0} rowIndex={index}>
+          <div style={style}>
+            <PostItem key={post.id} post={post} />
+          </div>
+        </CellMeasurer>
       );
     }
 
@@ -39,54 +52,22 @@ export const PostListPage: React.FC = () => {
         {({ height, isScrolling, onChildScroll, scrollTop }) => (
           <AutoSizer disableHeight>
             {({ width }) => (
-              <div>
-                <List
-                  autoHeight
-                  height={height}
-                  width={width}
-                  isScrolling={isScrolling}
-                  onScroll={onChildScroll}
-                  scrollTop={scrollTop}
-                  rowCount={data?.length || 0}
-                  rowHeight={260}
-                  rowRenderer={renderRow}
-                />
-              </div>
+              <List
+                autoHeight
+                height={height}
+                width={width}
+                isScrolling={isScrolling}
+                onScroll={onChildScroll}
+                scrollTop={scrollTop}
+                rowCount={data?.length || 0}
+                rowHeight={cache.current.rowHeight}
+                deferredMeasurementCache={cache.current}
+                rowRenderer={renderRow}
+              />
             )}
           </AutoSizer>
         )}
       </WindowScroller>
-      {/* <div style={{ width: '100%', height: '100vh' }}>
-        <WindowScroller>
-          {({ height, isScrolling, onChildScroll, registerChild, scrollLeft, scrollTop }) => (
-            <AutoSizer disableHeight>
-              {({ width }) => (
-                <div>
-                  <List
-                    width={width}
-                    height={height}
-                    rowHeight={260}
-                    rowCount={data?.length || 0}
-                    rowRenderer={({ key, index, style, parent }) => {
-                      if (data) {
-                        const post = data[index];
-
-                        return (
-                          <div key={key} style={style}>
-                            <PostItem key={post.id} post={post} />
-                          </div>
-                        );
-                      }
-                    }}
-                  />
-                </div>
-              )}
-            </AutoSizer>
-          )}
-        </WindowScroller>
-      </div> */}
-      {/* {data?.map((post) => 
-      <PostItem key={post.id} post={post} />)} */}
     </>
   );
 };
