@@ -1,0 +1,22 @@
+@import '@shared/styles/vars.scss';
+
+.back {
+  color: $blue;
+  line-height: 26px;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  border: none;
+  background-color: inherit;
+  cursor: pointer;
+  padding: 0;
+
+  &::before {
+    display: inline-block;
+    background-image: url('../../../../public/icons/arrow-left-active.svg');
+    content: '';
+    width: 6px;
+    height: 10px;
+    margin-right: 8px;
+  }
+}

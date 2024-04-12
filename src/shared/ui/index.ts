@@ -4,7 +4,8 @@ export { Title } from './typography/title';
 export * from './typography/types';
 
 // UI -> BUTTONS
-export { Button } from './buttons/btn';
+export { Button } from './buttons/btn/btn';
+export { BackBtn } from './buttons/back-btn/back-btn';
 export * from './buttons/types';
 
 // UI -> BLOCKS

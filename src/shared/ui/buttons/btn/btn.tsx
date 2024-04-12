@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { EBtnTheme } from './types';
+import { EBtnTheme } from '../types';
 import { combineStyles } from '@shared/lib';
 
 import styles from './btn.module.scss';
