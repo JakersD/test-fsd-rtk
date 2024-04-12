@@ -1,5 +1,5 @@
 import { ETitleSize, Title } from '@shared/ui';
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 
 import styles from './post-list.module.scss';
 import { useGetPostsQuery } from '@entities/post';
@@ -9,13 +9,15 @@ import {
   AutoSizer,
   CellMeasurer,
   CellMeasurerCache,
+  InfiniteLoader,
   List,
   ListRowProps,
   WindowScroller,
 } from 'react-virtualized';
 
 export const PostListPage: React.FC = () => {
-  const { data, isLoading } = useGetPostsQuery();
+  const [page, setPage] = useState(1);
+  const { data, isLoading } = useGetPostsQuery(page);
   const cache = useRef(
     new CellMeasurerCache({
       fixedWidth: true,
@@ -46,28 +48,44 @@ export const PostListPage: React.FC = () => {
   return (
     <>
       <Title className={styles.title} size={ETitleSize.H1}>
-        Post Generator
+        Post Infinite Scroll
       </Title>
-      <WindowScroller>
-        {({ height, isScrolling, onChildScroll, scrollTop }) => (
-          <AutoSizer disableHeight>
-            {({ width }) => (
-              <List
-                autoHeight
-                height={height}
-                width={width}
-                isScrolling={isScrolling}
-                onScroll={onChildScroll}
-                scrollTop={scrollTop}
-                rowCount={data?.length || 0}
-                rowHeight={cache.current.rowHeight}
-                deferredMeasurementCache={cache.current}
-                rowRenderer={renderRow}
-              />
-            )}
-          </AutoSizer>
-        )}
-      </WindowScroller>
+      {data && (
+        <WindowScroller>
+          {({ height, isScrolling, onChildScroll, scrollTop }) => (
+            <InfiniteLoader
+              isRowLoaded={({ index }) => index + 1 < data.length}
+              loadMoreRows={({ startIndex, stopIndex }) => {
+                console.log('Функция для загрузки отстрелила', startIndex, stopIndex);
+                setPage(page + 1);
+                return new Promise(() => {});
+              }}
+              rowCount={data.length}
+            >
+              {({ onRowsRendered, registerChild }) => (
+                <AutoSizer disableHeight>
+                  {({ width }) => (
+                    <List
+                      ref={registerChild}
+                      autoHeight
+                      height={height}
+                      width={width}
+                      isScrolling={isScrolling}
+                      onScroll={onChildScroll}
+                      scrollTop={scrollTop}
+                      rowCount={data.length}
+                      rowHeight={cache.current.rowHeight}
+                      deferredMeasurementCache={cache.current}
+                      rowRenderer={renderRow}
+                      onRowsRendered={onRowsRendered}
+                    />
+                  )}
+                </AutoSizer>
+              )}
+            </InfiniteLoader>
+          )}
+        </WindowScroller>
+      )}
     </>
   );
 };

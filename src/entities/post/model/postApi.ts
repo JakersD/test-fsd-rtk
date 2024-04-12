@@ -3,11 +3,21 @@ import { IPost } from './types';
 
 export const postApi = createApi({
   reducerPath: 'post',
+  tagTypes: ['Posts'],
   baseQuery: fetchBaseQuery({ baseUrl: 'https://jsonplaceholder.typicode.com/' }),
   endpoints: (builder) => ({
-    getPosts: builder.query<IPost[], void>({
-      // query: () => `posts?_limit=20`,
-      query: () => `posts`,
+    getPosts: builder.query<IPost[], number>({
+      query: () => `posts?_limit=30`,
+      serializeQueryArgs: ({ endpointName }) => {
+        return endpointName;
+      },
+      merge: (currentCache, newPosts) => {
+        currentCache.push(...newPosts);
+      },
+
+      forceRefetch({ currentArg, previousArg }) {
+        return currentArg !== previousArg;
+      },
     }),
   }),
 });
